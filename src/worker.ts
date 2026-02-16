@@ -4,7 +4,7 @@
  * Transport implementations for Bun/Web Workers.
  */
 
-import type { PortalMessage, Transport } from './types.js'
+import type { PortalMessage, Transport } from "./types.js";
 
 // =============================================================================
 // Main Thread Transport (talks to worker)
@@ -24,34 +24,34 @@ import type { PortalMessage, Transport } from './types.js'
  * ```
  */
 export function createWorkerTransport(worker: Worker): Transport {
-  const handlers = new Set<(message: PortalMessage) => void>()
+  const handlers = new Set<(message: PortalMessage) => void>();
 
   const messageHandler = (event: MessageEvent<PortalMessage>) => {
     for (const handler of handlers) {
-      handler(event.data)
+      handler(event.data);
     }
-  }
+  };
 
-  worker.addEventListener('message', messageHandler)
+  worker.addEventListener("message", messageHandler);
 
   return {
     send(message: PortalMessage): void {
-      worker.postMessage(message)
+      worker.postMessage(message);
     },
 
     subscribe(handler: (message: PortalMessage) => void): () => void {
-      handlers.add(handler)
+      handlers.add(handler);
       return () => {
-        handlers.delete(handler)
-      }
+        handlers.delete(handler);
+      };
     },
 
     close(): void {
-      worker.removeEventListener('message', messageHandler)
-      handlers.clear()
-      worker.terminate()
+      worker.removeEventListener("message", messageHandler);
+      handlers.clear();
+      worker.terminate();
     },
-  }
+  };
 }
 
 // =============================================================================
@@ -62,10 +62,10 @@ export function createWorkerTransport(worker: Worker): Transport {
  * Global self reference in worker context.
  */
 declare const self: {
-  postMessage(message: unknown): void
-  addEventListener(type: 'message', handler: (event: MessageEvent) => void): void
-  removeEventListener(type: 'message', handler: (event: MessageEvent) => void): void
-}
+  postMessage(message: unknown): void;
+  addEventListener(type: "message", handler: (event: MessageEvent) => void): void;
+  removeEventListener(type: "message", handler: (event: MessageEvent) => void): void;
+};
 
 /**
  * Create a transport for a worker to communicate with the main thread.
@@ -82,33 +82,33 @@ declare const self: {
  * ```
  */
 export function createWorkerSelfTransport(): Transport {
-  const handlers = new Set<(message: PortalMessage) => void>()
+  const handlers = new Set<(message: PortalMessage) => void>();
 
   const messageHandler = (event: MessageEvent<PortalMessage>) => {
     for (const handler of handlers) {
-      handler(event.data)
+      handler(event.data);
     }
-  }
+  };
 
-  self.addEventListener('message', messageHandler)
+  self.addEventListener("message", messageHandler);
 
   return {
     send(message: PortalMessage): void {
-      self.postMessage(message)
+      self.postMessage(message);
     },
 
     subscribe(handler: (message: PortalMessage) => void): () => void {
-      handlers.add(handler)
+      handlers.add(handler);
       return () => {
-        handlers.delete(handler)
-      }
+        handlers.delete(handler);
+      };
     },
 
     close(): void {
-      self.removeEventListener('message', messageHandler)
-      handlers.clear()
+      self.removeEventListener("message", messageHandler);
+      handlers.clear();
     },
-  }
+  };
 }
 
 // =============================================================================
@@ -133,36 +133,36 @@ export function createWorkerSelfTransport(): Transport {
  * ```
  */
 export function createPortTransport(port: MessagePort): Transport {
-  const handlers = new Set<(message: PortalMessage) => void>()
+  const handlers = new Set<(message: PortalMessage) => void>();
 
   const messageHandler = (event: Event) => {
-    const data = (event as unknown as { data: PortalMessage }).data
+    const data = (event as unknown as { data: PortalMessage }).data;
     for (const handler of handlers) {
-      handler(data)
+      handler(data);
     }
-  }
+  };
 
-  port.addEventListener('message', messageHandler)
-  port.start()
+  port.addEventListener("message", messageHandler);
+  port.start();
 
   return {
     send(message: PortalMessage): void {
-      port.postMessage(message)
+      port.postMessage(message);
     },
 
     subscribe(handler: (message: PortalMessage) => void): () => void {
-      handlers.add(handler)
+      handlers.add(handler);
       return () => {
-        handlers.delete(handler)
-      }
+        handlers.delete(handler);
+      };
     },
 
     close(): void {
-      port.removeEventListener('message', messageHandler)
-      handlers.clear()
-      port.close()
+      port.removeEventListener("message", messageHandler);
+      handlers.clear();
+      port.close();
     },
-  }
+  };
 }
 
 // =============================================================================
@@ -184,54 +184,54 @@ export function createPortTransport(port: MessagePort): Transport {
  * ```
  */
 export function createLoopbackTransports(): [Transport, Transport] {
-  const handlersA = new Set<(message: PortalMessage) => void>()
-  const handlersB = new Set<(message: PortalMessage) => void>()
+  const handlersA = new Set<(message: PortalMessage) => void>();
+  const handlersB = new Set<(message: PortalMessage) => void>();
 
   const transportA: Transport = {
     send(message: PortalMessage): void {
       // Async to simulate real transport
       queueMicrotask(() => {
         for (const handler of handlersB) {
-          handler(message)
+          handler(message);
         }
-      })
+      });
     },
 
     subscribe(handler: (message: PortalMessage) => void): () => void {
-      handlersA.add(handler)
+      handlersA.add(handler);
       return () => {
-        handlersA.delete(handler)
-      }
+        handlersA.delete(handler);
+      };
     },
 
     close(): void {
-      handlersA.clear()
+      handlersA.clear();
     },
-  }
+  };
 
   const transportB: Transport = {
     send(message: PortalMessage): void {
       queueMicrotask(() => {
         for (const handler of handlersA) {
-          handler(message)
+          handler(message);
         }
-      })
+      });
     },
 
     subscribe(handler: (message: PortalMessage) => void): () => void {
-      handlersB.add(handler)
+      handlersB.add(handler);
       return () => {
-        handlersB.delete(handler)
-      }
+        handlersB.delete(handler);
+      };
     },
 
     close(): void {
-      handlersB.clear()
+      handlersB.clear();
     },
-  }
+  };
 
-  return [transportA, transportB]
+  return [transportA, transportB];
 }
 
 // Re-export types
-export type { PortalMessage, Transport } from './types.js'
+export type { PortalMessage, Transport } from "./types.js";

@@ -4,20 +4,20 @@
  * Error classes for portal operations.
  */
 
-import { ErrorCodes, type ErrorCode, type PortalError } from './types.js'
+import { ErrorCodes, type ErrorCode, type PortalError } from "./types.js";
 
 /**
  * Base portal error class.
  */
 export class PortalErrorBase extends Error {
-  readonly code: ErrorCode
-  readonly data?: unknown
+  readonly code: ErrorCode;
+  readonly data?: unknown;
 
   constructor(code: ErrorCode, message: string, data?: unknown) {
-    super(message)
-    this.name = 'PortalError'
-    this.code = code
-    this.data = data
+    super(message);
+    this.name = "PortalError";
+    this.code = code;
+    this.data = data;
   }
 
   /**
@@ -28,14 +28,14 @@ export class PortalErrorBase extends Error {
       code: this.code,
       message: this.message,
       ...(this.data !== undefined && { data: this.data }),
-    }
+    };
   }
 
   /**
    * Create from wire format.
    */
   static fromJSON(error: PortalError): PortalErrorBase {
-    return new PortalErrorBase(error.code as ErrorCode, error.message, error.data)
+    return new PortalErrorBase(error.code as ErrorCode, error.message, error.data);
   }
 }
 
@@ -44,8 +44,8 @@ export class PortalErrorBase extends Error {
  */
 export class MethodNotFoundError extends PortalErrorBase {
   constructor(method: string) {
-    super(ErrorCodes.METHOD_NOT_FOUND, `Method not found: ${method}`)
-    this.name = 'MethodNotFoundError'
+    super(ErrorCodes.METHOD_NOT_FOUND, `Method not found: ${method}`);
+    this.name = "MethodNotFoundError";
   }
 }
 
@@ -54,8 +54,8 @@ export class MethodNotFoundError extends PortalErrorBase {
  */
 export class InvalidParamsError extends PortalErrorBase {
   constructor(message: string, data?: unknown) {
-    super(ErrorCodes.INVALID_PARAMS, message, data)
-    this.name = 'InvalidParamsError'
+    super(ErrorCodes.INVALID_PARAMS, message, data);
+    this.name = "InvalidParamsError";
   }
 }
 
@@ -64,8 +64,8 @@ export class InvalidParamsError extends PortalErrorBase {
  */
 export class TimeoutError extends PortalErrorBase {
   constructor(timeoutMs: number) {
-    super(ErrorCodes.TIMEOUT, `Request timed out after ${timeoutMs}ms`)
-    this.name = 'TimeoutError'
+    super(ErrorCodes.TIMEOUT, `Request timed out after ${timeoutMs}ms`);
+    this.name = "TimeoutError";
   }
 }
 
@@ -73,9 +73,9 @@ export class TimeoutError extends PortalErrorBase {
  * User rejected error.
  */
 export class UserRejectedError extends PortalErrorBase {
-  constructor(message = 'User rejected the request') {
-    super(ErrorCodes.USER_REJECTED, message)
-    this.name = 'UserRejectedError'
+  constructor(message = "User rejected the request") {
+    super(ErrorCodes.USER_REJECTED, message);
+    this.name = "UserRejectedError";
   }
 }
 
@@ -84,8 +84,8 @@ export class UserRejectedError extends PortalErrorBase {
  */
 export class InternalError extends PortalErrorBase {
   constructor(message: string, data?: unknown) {
-    super(ErrorCodes.INTERNAL_ERROR, message, data)
-    this.name = 'InternalError'
+    super(ErrorCodes.INTERNAL_ERROR, message, data);
+    this.name = "InternalError";
   }
 }
 
@@ -94,7 +94,7 @@ export class InternalError extends PortalErrorBase {
  */
 export class TransportError extends PortalErrorBase {
   constructor(message: string, data?: unknown) {
-    super(ErrorCodes.TRANSPORT_ERROR, message, data)
-    this.name = 'TransportError'
+    super(ErrorCodes.TRANSPORT_ERROR, message, data);
+    this.name = "TransportError";
   }
 }

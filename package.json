@@ -38,8 +38,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src",
     "lint:fix": "oxlint src --fix",
-    "format": "bun x prettier --write \"src/**/*.ts\" \"examples/**/*.ts\"",
-    "format:check": "bun x prettier --check \"src/**/*.ts\" \"examples/**/*.ts\"",
+    "format": "oxfmt src examples --write",
+    "format:check": "oxfmt src examples --check",
     "check": "bun run format:check && bun run lint && bun run typecheck && bun test",
     "prepublishOnly": "bun run check && bun run build"
   },
@@ -54,8 +54,8 @@
   "devDependencies": {
     "@changesets/cli": "^2.29.8",
     "@types/bun": "^1.2.3",
+    "oxfmt": "^0.33.0",
     "oxlint": "^1.48.0",
-    "prettier": "^3.8.1",
     "typescript": "^5.7.3",
     "viem": "^2.23.0"
   },

@@ -4,7 +4,7 @@
  * Handles incoming requests and dispatches to method handlers.
  */
 
-import { InternalError, MethodNotFoundError, PortalErrorBase } from './errors.js'
+import { InternalError, MethodNotFoundError, PortalErrorBase } from "./errors.js";
 import type {
   HandlerContext,
   PortalHost,
@@ -15,7 +15,7 @@ import type {
   PortalResponse,
   PortalSchema,
   Transport,
-} from './types.js'
+} from "./types.js";
 
 /**
  * Create a portal host.
@@ -34,73 +34,73 @@ export function createHost<TSchema extends PortalSchema>(
   transport: Transport,
   options: PortalHostOptions<TSchema>,
 ): PortalHost<TSchema> {
-  const { handlers, fallback } = options
+  const { handlers, fallback } = options;
 
   // Handle incoming messages
   const unsubscribe = transport.subscribe(async (message: PortalMessage) => {
-    if (message.type !== 'request') return
+    if (message.type !== "request") return;
 
-    const request = message as PortalRequest<TSchema>
-    const { id, method, params } = request
+    const request = message as PortalRequest<TSchema>;
+    const { id, method, params } = request;
 
-    const context: HandlerContext = { id }
+    const context: HandlerContext = { id };
 
-    let response: PortalResponse
+    let response: PortalResponse;
 
     try {
-      const methodStr = method as string
-      const handler = handlers[method as keyof TSchema]
+      const methodStr = method as string;
+      const handler = handlers[method as keyof TSchema];
 
-      let result: unknown
+      let result: unknown;
 
       if (handler) {
-        result = await handler(params, context)
+        result = await handler(params, context);
       } else if (fallback) {
-        result = await fallback(methodStr, params, context)
+        result = await fallback(methodStr, params, context);
       } else {
-        throw new MethodNotFoundError(methodStr)
+        throw new MethodNotFoundError(methodStr);
       }
 
       response = {
-        type: 'response',
+        type: "response",
         id,
         result,
-      }
+      };
     } catch (error) {
       if (error instanceof PortalErrorBase) {
         response = {
-          type: 'response',
+          type: "response",
           id,
           error: error.toJSON(),
-        }
+        };
       } else {
         const internalError = new InternalError(
-          error instanceof Error ? error.message : 'Unknown error',
-        )
+          error instanceof Error ? error.message : "Unknown error",
+        );
         response = {
-          type: 'response',
+          type: "response",
           id,
           error: internalError.toJSON(),
-        }
+        };
       }
     }
 
-    transport.send(response)
-  })
+    transport.send(response);
+  });
 
   return {
     push<TData = unknown>(topic: string, data: TData): void {
       const message: PortalPush<TData> = {
-        type: 'push',
+        type: "push",
         topic,
         data,
-      }
-      transport.send(message as PortalMessage)
+      };
+      transport.send(message as PortalMessage);
     },
 
     close(): void {
-      unsubscribe()
-      transport.close?.()
+      unsubscribe();
+      transport.close?.();
     },
-  }
+  };
 }

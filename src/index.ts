@@ -37,8 +37,8 @@
  */
 
 // Core
-export { createClient } from './client.js'
-export { createHost } from './host.js'
+export { createClient } from "./client.js";
+export { createHost } from "./host.js";
 
 // Errors
 export {
@@ -49,7 +49,7 @@ export {
   TimeoutError,
   TransportError,
   UserRejectedError,
-} from './errors.js'
+} from "./errors.js";
 
 // Types
 export {
@@ -74,4 +74,4 @@ export {
   type PortalSchema,
   type ResultOf,
   type Transport,
-} from './types.js'
+} from "./types.js";
