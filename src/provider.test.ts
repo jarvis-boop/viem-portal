@@ -1,5 +1,5 @@
 /**
- * Portal Viem Transport Tests
+ * Portal Provider Tests
  */
 
 import { describe, expect, test, beforeEach, afterEach } from "bun:test";
@@ -17,7 +17,7 @@ import {
 import type { MergeSchemas } from "./types";
 
 // =============================================================================
-// Test Schema (extends EthRpcSchema with custom methods)
+// Test Schema
 // =============================================================================
 
 type CustomSchema = {
@@ -47,9 +47,7 @@ describe("portalTransport", () => {
   test("creates a valid Viem transport", async () => {
     const host = createHost<TestSchema>(hostTransport, {
       handlers: {
-        eth_request: createMockRpcHandler({
-          eth_chainId: "0x1",
-        }),
+        ...createMockRpcHandler({ eth_chainId: "0x1" }),
         ping: () => "pong",
         wallet_connect: () => ({ address: "0x123" }),
       },
@@ -58,7 +56,6 @@ describe("portalTransport", () => {
     const portalClient = createClient<TestSchema>(clientTransport);
     const transport = portalTransport(portalClient);
 
-    // The transport factory should be a function
     expect(typeof transport).toBe("function");
 
     portalClient.close();
@@ -68,9 +65,7 @@ describe("portalTransport", () => {
   test("forwards eth_chainId correctly", async () => {
     const host = createHost<TestSchema>(hostTransport, {
       handlers: {
-        eth_request: createMockRpcHandler({
-          eth_chainId: "0x1",
-        }),
+        ...createMockRpcHandler({ eth_chainId: "0x1" }),
         ping: () => "pong",
         wallet_connect: () => ({ address: "0x123" }),
       },
@@ -93,9 +88,9 @@ describe("portalTransport", () => {
   test("forwards eth_blockNumber correctly", async () => {
     const host = createHost<TestSchema>(hostTransport, {
       handlers: {
-        eth_request: createMockRpcHandler({
+        ...createMockRpcHandler({
           eth_chainId: "0x1",
-          eth_blockNumber: "0x10f2c5a", // 17829978
+          eth_blockNumber: "0x10f2c5a",
         }),
         ping: () => "pong",
         wallet_connect: () => ({ address: "0x123" }),
@@ -110,7 +105,6 @@ describe("portalTransport", () => {
     });
 
     const blockNumber = await viemClient.getBlockNumber();
-    // 0x10f2c5a = 17829978
     expect(blockNumber).toBe(BigInt(0x10f2c5a));
 
     portalClient.close();
@@ -120,12 +114,12 @@ describe("portalTransport", () => {
   test("handles eth_getBalance with params", async () => {
     const host = createHost<TestSchema>(hostTransport, {
       handlers: {
-        eth_request: createMockRpcHandler({
+        ...createMockRpcHandler({
           eth_chainId: "0x1",
           eth_getBalance: (address: unknown, block: unknown) => {
             expect(address).toBe("0xd8da6bf26964af9d7eed9e03e53415d37aa96045");
             expect(block).toBe("latest");
-            return "0x8ac7230489e80000"; // 10 ETH
+            return "0x8ac7230489e80000";
           },
         }),
         ping: () => "pong",
@@ -153,7 +147,7 @@ describe("portalTransport", () => {
   test("propagates RPC errors correctly", async () => {
     const host = createHost<TestSchema>(hostTransport, {
       handlers: {
-        eth_request: createMockRpcHandler({
+        ...createMockRpcHandler({
           eth_chainId: "0x1",
           eth_call: () => {
             const error = new Error("execution reverted") as Error & { code: number };
@@ -187,9 +181,7 @@ describe("portalTransport", () => {
   test("handles custom portal methods alongside eth_request", async () => {
     const host = createHost<TestSchema>(hostTransport, {
       handlers: {
-        eth_request: createMockRpcHandler({
-          eth_chainId: "0x1",
-        }),
+        ...createMockRpcHandler({ eth_chainId: "0x1" }),
         ping: () => "pong",
         wallet_connect: ([chainId]) => ({
           address: `0x${chainId.toString(16).padStart(40, "0")}`,
@@ -199,15 +191,12 @@ describe("portalTransport", () => {
 
     const portalClient = createClient<TestSchema>(clientTransport);
 
-    // Custom method through portal
     const pong = await portalClient.request("ping");
     expect(pong).toBe("pong");
 
-    // Custom wallet method
     const wallet = await portalClient.request("wallet_connect", 1);
     expect(wallet.address).toBe("0x0000000000000000000000000000000000000001");
 
-    // Viem method through portal
     const viemClient = createPublicClient({
       chain: mainnet,
       transport: portalTransport(portalClient),
@@ -223,42 +212,41 @@ describe("portalTransport", () => {
 
 describe("createMockRpcHandler", () => {
   test("returns static values", async () => {
-    const handler = createMockRpcHandler({
+    const { eth_request } = createMockRpcHandler({
       eth_chainId: "0x1",
       eth_blockNumber: "0x100",
     });
 
-    expect(await handler(["eth_chainId", []])).toBe("0x1");
-    expect(await handler(["eth_blockNumber", []])).toBe("0x100");
+    expect(await eth_request(["eth_chainId", []])).toBe("0x1");
+    expect(await eth_request(["eth_blockNumber", []])).toBe("0x100");
   });
 
   test("calls functions with params", async () => {
-    const handler = createMockRpcHandler({
+    const { eth_request } = createMockRpcHandler({
       eth_getBalance: (address: unknown, block: unknown) => {
         return `balance:${address}:${block}`;
       },
     });
 
-    const result = await handler(["eth_getBalance", ["0x123", "latest"]]);
+    const result = await eth_request(["eth_getBalance", ["0x123", "latest"]]);
     expect(result).toBe("balance:0x123:latest");
   });
 
   test("throws for unknown methods", async () => {
-    const handler = createMockRpcHandler({
+    const { eth_request } = createMockRpcHandler({
       eth_chainId: "0x1",
     });
 
-    await expect(handler(["unknown_method", []])).rejects.toThrow("Mock: Method not supported");
+    await expect(eth_request(["unknown_method", []])).rejects.toThrow("Mock: Method not supported");
   });
 });
 
 describe("createRpcHandler", () => {
   test("formats JSON-RPC requests correctly", async () => {
-    // Mock fetch
     const originalFetch = globalThis.fetch;
     let capturedBody: unknown;
 
-    globalThis.fetch = async (url, options) => {
+    globalThis.fetch = async (_url, options) => {
       capturedBody = JSON.parse(options?.body as string);
       return new Response(
         JSON.stringify({
@@ -271,11 +259,9 @@ describe("createRpcHandler", () => {
     };
 
     try {
-      const handler = createRpcHandler({
-        rpcUrl: "https://example.com/rpc",
-      });
+      const { eth_request } = createRpcHandler({ rpcUrl: "https://example.com/rpc" });
 
-      const result = await handler(["eth_chainId", []]);
+      const result = await eth_request(["eth_chainId", []]);
       expect(result).toBe("0x1");
       expect(capturedBody).toMatchObject({
         jsonrpc: "2.0",
@@ -302,11 +288,9 @@ describe("createRpcHandler", () => {
     };
 
     try {
-      const handler = createRpcHandler({
-        rpcUrl: "https://example.com/rpc",
-      });
+      const { eth_request } = createRpcHandler({ rpcUrl: "https://example.com/rpc" });
 
-      await expect(handler(["eth_chainId", []])).rejects.toThrow("Internal error");
+      await expect(eth_request(["eth_chainId", []])).rejects.toThrow("Internal error");
     } finally {
       globalThis.fetch = originalFetch;
     }

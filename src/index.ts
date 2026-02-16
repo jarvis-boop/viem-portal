@@ -73,9 +73,4 @@ export {
 } from "./types.js";
 
 // Transports
-export {
-  createLoopbackTransports,
-  createPortTransport,
-  createWorkerSelfTransport,
-  createWorkerTransport,
-} from "./transports.js";
+export { createLoopbackTransports } from "./transports.js";
