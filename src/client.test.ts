@@ -5,7 +5,7 @@
 import { describe, expect, test, beforeEach, afterEach } from "bun:test";
 import { createClient } from "./client";
 import { createHost } from "./host";
-import { createLoopbackTransports } from "./worker";
+import { createLoopbackTransports } from "./transports";
 import { TimeoutError } from "./errors";
 
 // =============================================================================

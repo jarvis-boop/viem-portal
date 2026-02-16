@@ -1,11 +1,10 @@
 /**
- * Portal - Typed messaging layer with Viem transport integration
+ * viem-portal - Typed messaging layer with Viem transport integration
  *
  * @example
  * ```ts
- * import { createClient, createHost } from 'portal'
- * import { createLoopbackTransports } from 'portal/worker'
- * import { portalTransport } from 'portal/viem'
+ * import { createClient, createHost, createLoopbackTransports } from 'viem-portal'
+ * import { portalTransport } from 'viem-portal/provider'
  *
  * // Define your schema
  * type MySchema = {
@@ -13,7 +12,7 @@
  *   add: { params: [a: number, b: number]; result: number }
  * }
  *
- * // Create transports (Worker, MessageChannel, etc.)
+ * // Create transports
  * const [clientTransport, hostTransport] = createLoopbackTransports()
  *
  * // Create host with handlers
@@ -30,9 +29,6 @@
  * // Make typed requests
  * const greeting = await client.request('greet', 'World')
  * //    ^? string
- *
- * const sum = await client.request('add', 1, 2)
- * //    ^? number
  * ```
  */
 
@@ -75,3 +71,11 @@ export {
   type ResultOf,
   type Transport,
 } from "./types.js";
+
+// Transports
+export {
+  createLoopbackTransports,
+  createPortTransport,
+  createWorkerSelfTransport,
+  createWorkerTransport,
+} from "./transports.js";

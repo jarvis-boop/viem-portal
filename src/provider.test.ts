@@ -7,7 +7,7 @@ import { createPublicClient } from "viem";
 import { mainnet } from "viem/chains";
 import { createClient } from "./client";
 import { createHost } from "./host";
-import { createLoopbackTransports } from "./worker";
+import { createLoopbackTransports } from "./transports";
 import {
   portalTransport,
   createMockRpcHandler,

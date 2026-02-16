@@ -21,10 +21,6 @@
     "./provider": {
       "types": "./dist/provider.d.ts",
       "import": "./dist/provider.js"
-    },
-    "./worker": {
-      "types": "./dist/worker.d.ts",
-      "import": "./dist/worker.js"
     }
   },
   "files": [
@@ -33,7 +29,7 @@
   "scripts": {
     "build": "bun run build:types && bun run build:js",
     "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist",
-    "build:js": "bun build src/index.ts src/provider.ts src/worker.ts --outdir dist --format esm --target node",
+    "build:js": "bun build src/index.ts src/provider.ts --outdir dist --format esm --target node",
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src",
