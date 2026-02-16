@@ -106,10 +106,7 @@ export function createClient<TSchema extends PortalSchema>(
       })
     },
 
-    subscribe<TData = unknown>(
-      topic: string,
-      handler: (data: TData) => void,
-    ): () => void {
+    subscribe<TData = unknown>(topic: string, handler: (data: TData) => void): () => void {
       let handlers = subscriptions.get(topic)
       if (!handlers) {
         handlers = new Set()

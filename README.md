@@ -1,4 +1,8 @@
-# Portal
+# viem-portal
+
+[![CI](https://github.com/jarvis-boop/viem-portal/actions/workflows/ci.yml/badge.svg)](https://github.com/jarvis-boop/viem-portal/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/viem-portal)](https://www.npmjs.com/package/viem-portal)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Typed messaging layer with Viem transport integration.
 
@@ -15,9 +19,11 @@ A thin, strongly-typed portal abstraction for cross-context communication (Worke
 ## Installation
 
 ```bash
-bun add portal
+bun add viem-portal
 # or
-npm install portal
+npm install viem-portal
+# or
+pnpm add viem-portal
 ```
 
 ## Quick Start
@@ -25,8 +31,8 @@ npm install portal
 ### 1. Define Your Schema
 
 ```typescript
-import type { PortalSchema, MergeSchemas } from 'portal'
-import type { EthRpcSchema } from 'portal/viem'
+import type { PortalSchema, MergeSchemas } from 'viem-portal'
+import type { EthRpcSchema } from 'viem-portal/viem'
 
 // Custom methods
 type MySchema = {
@@ -41,9 +47,9 @@ type FullSchema = MergeSchemas<EthRpcSchema, MySchema>
 ### 2. Create Host (Worker/Background)
 
 ```typescript
-import { createHost } from 'portal'
-import { createWorkerSelfTransport } from 'portal/worker'
-import { createMockRpcHandler } from 'portal/viem'
+import { createHost } from 'viem-portal'
+import { createWorkerSelfTransport } from 'viem-portal/worker'
+import { createMockRpcHandler } from 'viem-portal/viem'
 import type { FullSchema } from './schema'
 
 const transport = createWorkerSelfTransport()
@@ -69,8 +75,8 @@ host.push('update', { count: 42 })
 ### 3. Create Client (Main Thread)
 
 ```typescript
-import { createClient } from 'portal'
-import { createWorkerTransport } from 'portal/worker'
+import { createClient } from 'viem-portal'
+import { createWorkerTransport } from 'viem-portal/worker'
 import type { FullSchema } from './schema'
 
 const worker = new Worker('./worker.ts')
@@ -100,8 +106,8 @@ Portal provides a Viem-compatible custom transport that forwards all JSON-RPC ca
 ```typescript
 import { createPublicClient } from 'viem'
 import { mainnet } from 'viem/chains'
-import { createClient } from 'portal'
-import { portalTransport } from 'portal/viem'
+import { createClient } from 'viem-portal'
+import { portalTransport } from 'viem-portal/viem'
 
 // Create portal client
 const portal = createClient<MySchema>(transport)
@@ -121,8 +127,8 @@ const balance = await viemClient.getBalance({ address: '0x...' })
 ### Host Side
 
 ```typescript
-import { createHost } from 'portal'
-import { createRpcHandler, createMockRpcHandler } from 'portal/viem'
+import { createHost } from 'viem-portal'
+import { createRpcHandler, createMockRpcHandler } from 'viem-portal/viem'
 
 // Production: Forward to real RPC
 const host = createHost<MySchema>(transport, {
@@ -209,8 +215,8 @@ Portal follows Provider v0.2 design patterns but generalizes beyond EIP-1193:
 
 ```typescript
 // content.ts (injected page)
-import { createClient } from 'portal'
-import { createPortTransport } from 'portal/worker'
+import { createClient } from 'viem-portal'
+import { createPortTransport } from 'viem-portal/worker'
 
 const port = chrome.runtime.connect({ name: 'portal' })
 const transport = createPortTransport(port)
@@ -247,14 +253,14 @@ const host = createHost<MySchema>(transport, {
 - `createClient<Schema>(transport, options?)` - Create a portal client
 - `createHost<Schema>(transport, options)` - Create a portal host
 
-### Transports (portal/worker)
+### Transports (viem-portal/worker)
 
 - `createWorkerTransport(worker)` - Main thread → Worker
 - `createWorkerSelfTransport()` - Worker → Main thread
 - `createPortTransport(port)` - MessagePort/chrome.runtime
 - `createLoopbackTransports()` - Testing pair
 
-### Viem (portal/viem)
+### Viem (viem-portal/viem)
 
 - `portalTransport(client, options?)` - Create Viem transport
 - `createRpcHandler(options)` - Production RPC forwarding

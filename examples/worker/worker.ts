@@ -40,10 +40,10 @@ const rpcHandler = createMockRpcHandler({
   eth_chainId: () => `0x${walletState.chainId.toString(16)}`,
 
   // Block info
-  eth_blockNumber: () => `0x${(Math.floor(Date.now() / 12000)).toString(16)}`,
+  eth_blockNumber: () => `0x${Math.floor(Date.now() / 12000).toString(16)}`,
 
   // Account info
-  eth_accounts: () => walletState.address ? [walletState.address] : [],
+  eth_accounts: () => (walletState.address ? [walletState.address] : []),
 
   eth_requestAccounts: () => {
     if (!walletState.connected) {

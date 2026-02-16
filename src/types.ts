@@ -55,10 +55,7 @@ export type PortalRequest<
 export type PortalResponse<TResult = unknown> = {
   type: 'response'
   id: number
-} & (
-  | { result: TResult; error?: never }
-  | { result?: never; error: PortalError }
-)
+} & ({ result: TResult; error?: never } | { result?: never; error: PortalError })
 
 /**
  * Push message sent from host to client (no correlation).
@@ -153,10 +150,7 @@ export type PortalClient<TSchema extends PortalSchema> = {
   /**
    * Subscribe to push messages on a topic.
    */
-  subscribe<TData = unknown>(
-    topic: string,
-    handler: (data: TData) => void,
-  ): () => void
+  subscribe<TData = unknown>(topic: string, handler: (data: TData) => void): () => void
 
   /**
    * Close the client and cleanup.
@@ -268,7 +262,5 @@ export type ResultOf<
 /**
  * Merge two schemas (for extending base with custom methods).
  */
-export type MergeSchemas<
-  TBase extends PortalSchema,
-  TExtension extends PortalSchema,
-> = TBase & TExtension
+export type MergeSchemas<TBase extends PortalSchema, TExtension extends PortalSchema> = TBase &
+  TExtension

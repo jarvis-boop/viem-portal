@@ -100,12 +100,7 @@ export function portalTransport<TSchema extends PortalSchema & EthRpcSchema>(
   portalClient: PortalClient<TSchema>,
   options: PortalTransportOptions = {},
 ): ViemTransport {
-  const {
-    key = 'portal',
-    name = 'Portal Transport',
-    retryCount = 0,
-    retryDelay = 150,
-  } = options
+  const { key = 'portal', name = 'Portal Transport', retryCount = 0, retryDelay = 150 } = options
 
   // Create EIP-1193 request function
   const request: EIP1193RequestFn = async ({ method, params }) => {
