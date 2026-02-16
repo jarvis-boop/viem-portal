@@ -1,0 +1,60 @@
+{
+  "name": "portal",
+  "version": "0.1.0",
+  "description": "Typed portal messaging layer with Viem transport integration",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./viem": {
+      "types": "./dist/viem.d.ts",
+      "import": "./dist/viem.js"
+    },
+    "./worker": {
+      "types": "./dist/worker.d.ts",
+      "import": "./dist/worker.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun run build:types && bun run build:js",
+    "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist",
+    "build:js": "bun build src/index.ts src/viem.ts src/worker.ts --outdir dist --format esm --target node",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint src",
+    "format": "oxfmt src --write",
+    "check": "bun run typecheck && bun run lint && bun test"
+  },
+  "peerDependencies": {
+    "viem": ">=2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "viem": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.3",
+    "oxlint": "^1.48.0",
+    "typescript": "^5.7.3",
+    "viem": "^2.23.0"
+  },
+  "keywords": [
+    "portal",
+    "messaging",
+    "viem",
+    "transport",
+    "ethereum",
+    "web3",
+    "browser-extension"
+  ],
+  "author": "jarvis-boop",
+  "license": "MIT"
+}
