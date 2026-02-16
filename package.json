@@ -18,9 +18,9 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./viem": {
-      "types": "./dist/viem.d.ts",
-      "import": "./dist/viem.js"
+    "./provider": {
+      "types": "./dist/provider.d.ts",
+      "import": "./dist/provider.js"
     },
     "./worker": {
       "types": "./dist/worker.d.ts",
@@ -33,7 +33,7 @@
   "scripts": {
     "build": "bun run build:types && bun run build:js",
     "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist",
-    "build:js": "bun build src/index.ts src/viem.ts src/worker.ts --outdir dist --format esm --target node",
+    "build:js": "bun build src/index.ts src/provider.ts src/worker.ts --outdir dist --format esm --target node",
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src",

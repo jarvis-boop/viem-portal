@@ -7,7 +7,7 @@
 
 import { createHost } from '../../src/host'
 import { createWorkerSelfTransport } from '../../src/worker'
-import { createMockRpcHandler } from '../../src/viem'
+import { createMockRpcHandler } from '../../src/provider'
 import type { PortalSchemaType } from './schema'
 
 // =============================================================================

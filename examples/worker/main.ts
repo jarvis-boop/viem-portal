@@ -9,7 +9,7 @@ import { createPublicClient, formatEther } from 'viem'
 import { mainnet, optimism } from 'viem/chains'
 import { createClient } from '../../src/client'
 import { createWorkerTransport } from '../../src/worker'
-import { portalTransport } from '../../src/viem'
+import { portalTransport } from '../../src/provider'
 import type { PortalSchemaType } from './schema'
 
 // =============================================================================

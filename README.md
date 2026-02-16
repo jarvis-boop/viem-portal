@@ -32,7 +32,7 @@ pnpm add viem-portal
 
 ```typescript
 import type { PortalSchema, MergeSchemas } from 'viem-portal'
-import type { EthRpcSchema } from 'viem-portal/viem'
+import type { EthRpcSchema } from 'viem-portal/provider'
 
 // Custom methods
 type MySchema = {
@@ -49,7 +49,7 @@ type FullSchema = MergeSchemas<EthRpcSchema, MySchema>
 ```typescript
 import { createHost } from 'viem-portal'
 import { createWorkerSelfTransport } from 'viem-portal/worker'
-import { createMockRpcHandler } from 'viem-portal/viem'
+import { createMockRpcHandler } from 'viem-portal/provider'
 import type { FullSchema } from './schema'
 
 const transport = createWorkerSelfTransport()
@@ -107,7 +107,7 @@ Portal provides a Viem-compatible custom transport that forwards all JSON-RPC ca
 import { createPublicClient } from 'viem'
 import { mainnet } from 'viem/chains'
 import { createClient } from 'viem-portal'
-import { portalTransport } from 'viem-portal/viem'
+import { portalTransport } from 'viem-portal/provider'
 
 // Create portal client
 const portal = createClient<MySchema>(transport)
@@ -128,7 +128,7 @@ const balance = await viemClient.getBalance({ address: '0x...' })
 
 ```typescript
 import { createHost } from 'viem-portal'
-import { createRpcHandler, createMockRpcHandler } from 'viem-portal/viem'
+import { createRpcHandler, createMockRpcHandler } from 'viem-portal/provider'
 
 // Production: Forward to real RPC
 const host = createHost<MySchema>(transport, {
@@ -260,9 +260,9 @@ const host = createHost<MySchema>(transport, {
 - `createPortTransport(port)` - MessagePort/chrome.runtime
 - `createLoopbackTransports()` - Testing pair
 
-### Viem (viem-portal/viem)
+### Provider (viem-portal/provider)
 
-- `portalTransport(client, options?)` - Create Viem transport
+- `portalTransport(client, options?)` - Create Viem-compatible transport
 - `createRpcHandler(options)` - Production RPC forwarding
 - `createMockRpcHandler(responses)` - Testing mocks
 

@@ -8,7 +8,12 @@ import { mainnet } from 'viem/chains'
 import { createClient } from './client'
 import { createHost } from './host'
 import { createLoopbackTransports } from './worker'
-import { portalTransport, createMockRpcHandler, createRpcHandler, type EthRpcSchema } from './viem'
+import {
+  portalTransport,
+  createMockRpcHandler,
+  createRpcHandler,
+  type EthRpcSchema,
+} from './provider'
 import type { MergeSchemas } from './types'
 
 // =============================================================================
