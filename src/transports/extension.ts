@@ -16,8 +16,20 @@ declare const chrome: {
     id: string;
     sendMessage: (message: unknown) => void;
     onMessage: {
-      addListener: (callback: (message: unknown, sender: { tab?: { id?: number } }, sendResponse: () => void) => void) => void;
-      removeListener: (callback: (message: unknown, sender: { tab?: { id?: number } }, sendResponse: () => void) => void) => void;
+      addListener: (
+        callback: (
+          message: unknown,
+          sender: { tab?: { id?: number } },
+          sendResponse: () => void,
+        ) => void,
+      ) => void;
+      removeListener: (
+        callback: (
+          message: unknown,
+          sender: { tab?: { id?: number } },
+          sendResponse: () => void,
+        ) => void,
+      ) => void;
     };
   };
   tabs: {
@@ -61,10 +73,7 @@ export function createWindowTransport(): Transport {
 
   return {
     send(message: PortalMessage) {
-      window.postMessage(
-        { type: PORTAL_MESSAGE_TYPE, message },
-        "*"
-      );
+      window.postMessage({ type: PORTAL_MESSAGE_TYPE, message }, "*");
     },
     subscribe(handler: (msg: PortalMessage) => void) {
       handlers.add(handler);
@@ -89,7 +98,7 @@ export function createRuntimeTransport(): Transport {
   const listener = (
     message: unknown,
     _sender: ChromeMessageSender,
-    sendResponse: (response?: unknown) => void
+    sendResponse: (response?: unknown) => void,
   ) => {
     if (!isPortalEnvelope(message)) return false;
     handlers.forEach((h) => h((message as PortalEnvelope).message));
@@ -128,7 +137,7 @@ export function createTabTransport(tabId?: number): Transport {
   const listener = (
     message: unknown,
     sender: ChromeMessageSender,
-    sendResponse: (response?: unknown) => void
+    sendResponse: (response?: unknown) => void,
   ) => {
     if (!isPortalEnvelope(message)) return false;
     if (tabId !== undefined && sender.tab?.id !== tabId) return false;
