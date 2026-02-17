@@ -74,3 +74,9 @@ export {
 
 // Transports
 export { createLoopbackTransports } from "./transports.js";
+export {
+  createWindowTransport,
+  createRuntimeTransport,
+  createTabTransport,
+  createRelayTransport,
+} from "./transports/extension.js";
