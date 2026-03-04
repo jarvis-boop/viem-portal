@@ -1,0 +1,1 @@
+{"changes":[{"kind":"feat","project":"viem-portal","body":"Expose sender in handler context for Chrome extension sender info"}]}

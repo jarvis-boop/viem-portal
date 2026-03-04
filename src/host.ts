@@ -41,9 +41,9 @@ export function createHost<TSchema extends PortalSchema>(
     if (message.type !== "request") return;
 
     const request = message as PortalRequest<TSchema>;
-    const { id, method, params } = request;
+    const { id, method, params, _sender } = request;
 
-    const context: HandlerContext = { id };
+    const context: HandlerContext = { id, sender: _sender };
 
     let response: PortalResponse;
 

@@ -205,6 +205,11 @@ export type HandlerContext = {
    * Request ID for correlation.
    */
   id: number;
+  /**
+   * Sender context from Chrome extension (if provided by transport).
+   * Contains tab info, URL, frame ID, etc.
+   */
+  sender?: ChromeMessageSender;
 };
 
 /**
