@@ -70,6 +70,7 @@ export {
   type PortalSchema,
   type ResultOf,
   type Transport,
+  type ChromeMessageSender,
 } from "./types.js";
 
 // Transports
@@ -80,3 +81,7 @@ export {
   createTabTransport,
   createRelayTransport,
 } from "./transports/extension.js";
+
+// Portal Transport for viem
+export { createPortalTransport } from "./portalWalletClient.js";
+export type { PortalRequestFn } from "./portalWalletClient.js";

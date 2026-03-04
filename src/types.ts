@@ -47,6 +47,30 @@ export type PortalRequest<
   id: number;
   method: TMethod;
   params: TSchema[TMethod]["params"];
+  /**
+   * Sender context from Chrome extension (injected by transport).
+   * Contains tab info, URL, frame ID, etc.
+   * Only present when message comes from chrome.runtime.onMessage.
+   */
+  _sender?: ChromeMessageSender;
+};
+
+/**
+ * Chrome extension message sender context.
+ */
+export type ChromeMessageSender = {
+  tab?: {
+    id?: number;
+    windowId?: number;
+    url?: string;
+    title?: string;
+    favIconUrl?: string;
+  };
+  frameId?: number;
+  url?: string;
+  documentId?: string;
+  documentUrl?: string;
+  origin?: string;
 };
 
 /**

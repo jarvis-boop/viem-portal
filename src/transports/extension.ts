@@ -8,7 +8,7 @@
  * - popup ↔ background (chrome.runtime)
  */
 
-import type { PortalMessage, Transport } from "../types.js";
+import type { ChromeMessageSender, PortalMessage, Transport } from "../types.js";
 
 // Chrome extension types (available at runtime in extension context)
 declare const chrome: {
@@ -36,8 +36,6 @@ declare const chrome: {
     sendMessage: (tabId: number, message: unknown) => void;
   };
 };
-
-type ChromeMessageSender = { tab?: { id?: number } };
 
 const PORTAL_MESSAGE_TYPE = "rainbow-portal";
 
@@ -97,11 +95,18 @@ export function createRuntimeTransport(): Transport {
 
   const listener = (
     message: unknown,
-    _sender: ChromeMessageSender,
+    sender: ChromeMessageSender,
     sendResponse: (response?: unknown) => void,
   ) => {
     if (!isPortalEnvelope(message)) return false;
-    handlers.forEach((h) => h((message as PortalEnvelope).message));
+
+    // Inject sender into request messages
+    const portalMessage = (message as PortalEnvelope).message;
+    if (portalMessage.type === "request") {
+      (portalMessage as { _sender?: ChromeMessageSender })._sender = sender;
+    }
+
+    handlers.forEach((h) => h(portalMessage));
     sendResponse({});
     return true;
   };
@@ -141,7 +146,14 @@ export function createTabTransport(tabId?: number): Transport {
   ) => {
     if (!isPortalEnvelope(message)) return false;
     if (tabId !== undefined && sender.tab?.id !== tabId) return false;
-    handlers.forEach((h) => h((message as PortalEnvelope).message));
+
+    // Inject sender into request messages
+    const portalMessage = (message as PortalEnvelope).message;
+    if (portalMessage.type === "request") {
+      (portalMessage as { _sender?: ChromeMessageSender })._sender = sender;
+    }
+
+    handlers.forEach((h) => h(portalMessage));
     sendResponse({});
     return true;
   };
