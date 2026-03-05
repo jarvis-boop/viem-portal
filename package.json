@@ -1,6 +1,6 @@
 {
   "name": "viem-portal",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Typed portal messaging layer with Viem transport integration",
   "repository": {
     "type": "git",

@@ -71,6 +71,8 @@ export {
   type ResultOf,
   type Transport,
   type ChromeMessageSender,
+  type PushSchema,
+  type PushTopicDef,
 } from "./types.js";
 
 // Transports

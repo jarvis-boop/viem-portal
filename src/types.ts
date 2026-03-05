@@ -231,11 +231,17 @@ export type MethodHandlers<TSchema extends PortalSchema> = {
 /**
  * Portal host - handles requests from clients.
  */
-export type PortalHost<_TSchema extends PortalSchema> = {
+export type PortalHost<
+  _TSchema extends PortalSchema,
+  TPushSchema extends PushSchema = PushSchema,
+> = {
   /**
    * Push a message to all connected clients.
    */
-  push<TData = unknown>(topic: string, data: TData): void;
+  push<Topic extends keyof TPushSchema & string>(
+    topic: Topic,
+    data: TPushSchema[Topic]["data"],
+  ): void;
 
   /**
    * Close the host and cleanup.
@@ -293,3 +299,19 @@ export type ResultOf<
  */
 export type MergeSchemas<TBase extends PortalSchema, TExtension extends PortalSchema> = TBase &
   TExtension;
+
+// =============================================================================
+// Push Schema Types
+// =============================================================================
+
+/**
+ * Push topic definition in a portal schema.
+ */
+export type PushTopicDef = {
+  data: unknown;
+};
+
+/**
+ * Push schema - maps topic names to their data types.
+ */
+export type PushSchema = Record<string, PushTopicDef>;

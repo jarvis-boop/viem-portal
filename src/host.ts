@@ -14,6 +14,7 @@ import type {
   PortalRequest,
   PortalResponse,
   PortalSchema,
+  PushSchema,
   Transport,
 } from "./types.js";
 
@@ -22,18 +23,24 @@ import type {
  *
  * @example
  * ```ts
+ * // Basic usage
  * const host = createHost<MySchema>(transport, {
  *   handlers: {
  *     greet: ([name]) => `Hello, ${name}!`,
- *     add: ([a, b]) => a + b,
  *   },
  * })
+ *
+ * // With typed push
+ * const host = createHost<MySchema, MyPushSchema>(transport, {
+ *   handlers: { ... },
+ * })
+ * host.push('txConfirmed', { hash: '0x...' }) // typed!
  * ```
  */
-export function createHost<TSchema extends PortalSchema>(
-  transport: Transport,
-  options: PortalHostOptions<TSchema>,
-): PortalHost<TSchema> {
+export function createHost<
+  TSchema extends PortalSchema,
+  TPushSchema extends PushSchema = PushSchema,
+>(transport: Transport, options: PortalHostOptions<TSchema>): PortalHost<TSchema, TPushSchema> {
   const { handlers, fallback } = options;
 
   // Handle incoming messages
@@ -89,8 +96,11 @@ export function createHost<TSchema extends PortalSchema>(
   });
 
   return {
-    push<TData = unknown>(topic: string, data: TData): void {
-      const message: PortalPush<TData> = {
+    push<Topic extends keyof TPushSchema & string>(
+      topic: Topic,
+      data: TPushSchema[Topic]["data"],
+    ): void {
+      const message: PortalPush<TPushSchema[Topic]["data"]> = {
         type: "push",
         topic,
         data,
