@@ -76,6 +76,9 @@ export {
   type PortalSchemaWithPush,
 } from "./types.js";
 
+// Type guards
+export { isPortalRequest, isPortalResponse, isPortalPush } from "./types.js";
+
 // Transports
 export { createLoopbackTransports } from "./transports.js";
 export {

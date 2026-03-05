@@ -333,3 +333,28 @@ export type PortalSchemaWithPush<
   TMethods extends PortalSchema = PortalSchema,
   TPush extends PushSchema = PushSchema,
 > = TMethods & TPush;
+
+// =============================================================================
+// Type Guards
+// =============================================================================
+
+/**
+ * Type guard to check if a message is a request
+ */
+export function isPortalRequest(message: PortalMessage): message is PortalRequest {
+  return message.type === "request";
+}
+
+/**
+ * Type guard to check if a message is a response
+ */
+export function isPortalResponse(message: PortalMessage): message is PortalResponse {
+  return message.type === "response";
+}
+
+/**
+ * Type guard to check if a message is a push
+ */
+export function isPortalPush(message: PortalMessage): message is PortalPush {
+  return message.type === "push";
+}
