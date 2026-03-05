@@ -321,3 +321,15 @@ export type PushTopicDef = {
  * Push schema - maps topic names to their data types.
  */
 export type PushSchema = Record<string, PushTopicDef>;
+
+// =============================================================================
+// Combined Schema Types
+// =============================================================================
+
+/**
+ * Combined portal schema that includes both request methods and push topics.
+ */
+export type PortalSchemaWithPush<
+  TMethods extends PortalSchema = PortalSchema,
+  TPush extends PushSchema = PushSchema,
+> = TMethods & TPush;

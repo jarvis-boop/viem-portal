@@ -73,6 +73,7 @@ export {
   type ChromeMessageSender,
   type PushSchema,
   type PushTopicDef,
+  type PortalSchemaWithPush,
 } from "./types.js";
 
 // Transports
