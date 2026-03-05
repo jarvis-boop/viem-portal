@@ -358,3 +358,27 @@ export function isPortalResponse(message: PortalMessage): message is PortalRespo
 export function isPortalPush(message: PortalMessage): message is PortalPush {
   return message.type === "push";
 }
+
+// =============================================================================
+// Schema Inference Helpers
+// =============================================================================
+
+/**
+ * Infer the request schema type from handlers.
+ * Useful for deriving the schema type without writing it manually.
+ *
+ * @example
+ * ```ts
+ * const handlers = {
+ *   greet: ([name]: [string]) => `Hello, ${name}!`,
+ *   add: ([a, b]: [number, number]) => a + b,
+ * }
+ * type InferredSchema = InferSchema<typeof handlers>
+ * // { greet: { params: [string]; result: string }, add: { params: [number, number]; result: number } }
+ * ```
+ */
+export type InferSchema<THandlers> = {
+  [K in keyof THandlers]: THandlers[K] extends (...params: infer P) => infer R
+    ? { params: P; result: R }
+    : never;
+};

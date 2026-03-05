@@ -79,6 +79,9 @@ export {
 // Type guards
 export { isPortalRequest, isPortalResponse, isPortalPush } from "./types.js";
 
+// Schema inference
+export { type InferSchema } from "./types.js";
+
 // Transports
 export { createLoopbackTransports } from "./transports.js";
 export {
