@@ -161,7 +161,10 @@ export type Transport = {
 /**
  * Portal client - makes requests to a host.
  */
-export type PortalClient<TSchema extends PortalSchema> = {
+export type PortalClient<
+  TSchema extends PortalSchema,
+  TPushSchema extends PushSchema = PushSchema,
+> = {
   /**
    * Send a request and wait for response.
    * Infers return type from schema.
@@ -174,7 +177,10 @@ export type PortalClient<TSchema extends PortalSchema> = {
   /**
    * Subscribe to push messages on a topic.
    */
-  subscribe<TData = unknown>(topic: string, handler: (data: TData) => void): () => void;
+  subscribe<Topic extends keyof TPushSchema & string>(
+    topic: Topic,
+    handler: (data: TPushSchema[Topic]["data"]) => void,
+  ): () => void;
 
   /**
    * Close the client and cleanup.

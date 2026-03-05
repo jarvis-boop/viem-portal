@@ -13,6 +13,7 @@ import type {
   PortalRequest,
   PortalResponse,
   PortalSchema,
+  PushSchema,
   Transport,
 } from "./types.js";
 
@@ -35,11 +36,19 @@ type PendingRequest = {
  * const result = await client.request('greet', 'World')
  * //    ^? string
  * ```
+ *
+ * With typed push:
+ * ```ts
+ * const client = createClient<MySchema, MyPushSchema>(transport)
+ * client.subscribe('txConfirmed', (data) => {
+ *   // data is typed as MyPushSchema['txConfirmed']['data']
+ * })
+ * ```
  */
-export function createClient<TSchema extends PortalSchema>(
-  transport: Transport,
-  options: PortalClientOptions = {},
-): PortalClient<TSchema> {
+export function createClient<
+  TSchema extends PortalSchema,
+  TPushSchema extends PushSchema = PushSchema,
+>(transport: Transport, options: PortalClientOptions = {}): PortalClient<TSchema, TPushSchema> {
   const { timeout = DEFAULT_TIMEOUT } = options;
 
   let requestId = 0;
@@ -106,7 +115,10 @@ export function createClient<TSchema extends PortalSchema>(
       });
     },
 
-    subscribe<TData = unknown>(topic: string, handler: (data: TData) => void): () => void {
+    subscribe<Topic extends keyof TPushSchema & string>(
+      topic: Topic,
+      handler: (data: TPushSchema[Topic]["data"]) => void,
+    ): () => void {
       let handlers = subscriptions.get(topic);
       if (!handlers) {
         handlers = new Set();
